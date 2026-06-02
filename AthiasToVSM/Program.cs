@@ -1,33 +1,50 @@
 using EmberLib.Glow;
 using EmberPlusProviderClassLib;
 using EmberPlusProviderClassLib.EmberHelpers;
-using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace AthiasToVSM
 {
     internal class Program
     {
-        static string[] asset = new string[] { "9853158885094f329329ab359fb856b7", "fe657d2c65e148c5b9a0fa8d50e13445", "2b2a6b37cffd4f299f39e4963689a9c5", "ef7cefdb7cde431ba58759633229b1bd" };
-
-
-
-    // ...
-
-    static async Task PatchAssetAsync(int index, object payload)
-    {
-        using var httpClient = new HttpClient();
-        var request = new HttpRequestMessage(HttpMethod.Patch, $"http://10.31.11.220/api/v2/assets/{asset[index]}")
+        static AppConfig config;
+        static AppConfig LoadConfig(string path = "config.json")
         {
-            Content = JsonContent.Create(payload)
-        };
-        var response = await httpClient.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-    }
+            if (!File.Exists(path))
+            {
+                const string message = "config.json not found";
+                const string caption = "Error";
+                var result = MessageBox.Show(message, caption,
+                                             MessageBoxButtons.OK,
+                                             MessageBoxIcon.Error);
+                throw new FileNotFoundException($"Config file not found at {path}");
+            }
 
-        static void SetActive(int index)
+            var json = File.ReadAllText(path);
+            var cfg = JsonSerializer.Deserialize<AppConfig>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return cfg;
+        }
+
+
+        static async Task PatchAssetAsync(int index, object payload)
         {
-            for (int i = 0; i < asset.Length; i++)
+            using var httpClient = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Patch, $"http://{config.AnthiasIP}/api/v2/assets/{config.Pages[index].Id}")
+            {
+                Content = JsonContent.Create(payload)
+            };
+            var response = await httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+        }
+
+        static void SetActiveByIndex(int index)
+        {
+            for (int i = 0; i < config.Pages.Count; i++)
             {
                 if (i == index)
                 {
@@ -39,28 +56,7 @@ namespace AthiasToVSM
                 }
             }
         }
-        
-        private static async Task<GlowValue[]> Kamerarajz(GlowValue[] arg)
-        {
-            SetActive(0);
-            return Array.Empty<GlowValue>();
-        }
-        private static async Task<GlowValue[]> OCP(GlowValue[] arg)
-        {
-            SetActive(1);
-            return Array.Empty<GlowValue>();
-        }
 
-        private static async Task<GlowValue[]> Idokep(GlowValue[] arg)
-        {
-            SetActive(2);
-            return Array.Empty<GlowValue>();
-        }
-        private static async Task<GlowValue[]> Ido(GlowValue[] arg)
-        {
-            SetActive(3);
-            return Array.Empty<GlowValue>();
-        }
 
         /// <summary>
         ///  The main entry point for the application.
@@ -68,30 +64,41 @@ namespace AthiasToVSM
         [STAThread]
         static void Main()
         {
+            config = LoadConfig();
             // Initiate EmBER+ tree
             var _emberTree = new EmberPlusProvider(
-                9091,
-                "Athias controller",
+                config.Port,
+                config.Identifier,
                 "Athias controller");
 
             _emberTree.CreateIdentityNode(
                 1,
-                "Athias",
                 "Athias controller",
+                "Athias controller over Ember+",
                 "HBJ",
-                "v1.0.0");
+                "v2.0.0");
 
             // General utility node
-            var utilityNode = _emberTree.AddChildNode(2,"pages");
-            utilityNode.AddFunction(1, "OCP",null, null, OCP);
-            utilityNode.AddFunction(2, "Idokep", null, null, Idokep);
-            utilityNode.AddFunction(3, "Ido", null, null, Ido);
-            utilityNode.AddFunction(4, "DCP", null, null, Kamerarajz);
+            var utilityNode = _emberTree.AddChildNode(2, "pages");
+            int id = 1;
+            foreach (var item in config.Pages)
+            {
+                // capture current index for the handler
+                int index = id - 1;
+                utilityNode.AddFunction(id++, item.Name, null, null, (GlowValue[] _) =>
+                {
+                    SetActiveByIndex(index);
+                    return Task.FromResult(Array.Empty<GlowValue>());
+                });
+            }
+
+
+
 
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            Application.Run(new Form1(config));
         }
     }
 }

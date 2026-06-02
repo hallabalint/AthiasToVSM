@@ -1,0 +1,27 @@
+{
+	"port": 9091,
+	"identifier": "Tail Monitor",
+	"anthiasIP": "10.31.11.220",
+	"pages": [
+		{
+			"name": "Kamera rajz",
+			"id": "9853158885094f329329ab359fb856b7"
+		},
+		{
+			"name": "OCP",
+			"id": "fe657d2c65e148c5b9a0fa8d50e13445"
+		},
+		{
+			"name": "OCP",
+			"id": "2b2a6b37cffd4f299f39e4963689a9c5"
+		},
+		{
+			"name": "OCP",
+			"id": "ef7cefdb7cde431ba58759633229b1bd"
+		},
+		{
+			"name": "OCP_Audio",
+			"id": "ef7cefdb7cde431ba58759633229b1bd"
+		}
+	]
+}
