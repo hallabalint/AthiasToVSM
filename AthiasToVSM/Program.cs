@@ -69,12 +69,12 @@ namespace AthiasToVSM
             var _emberTree = new EmberPlusProvider(
                 config.Port,
                 config.Identifier,
-                "Athias controller");
+                "Anthias controller");
 
             _emberTree.CreateIdentityNode(
                 1,
-                "Athias controller",
-                "Athias controller over Ember+",
+                "Anthias controller",
+                "Anthias controller over Ember+",
                 "HBJ",
                 "v2.0.0");
 
