@@ -5,23 +5,19 @@
 	"pages": [
 		{
 			"name": "OCP",
-			"id": "9853158885094f329329ab359fb856b7"
-		},
-		{
-			"name": "Időkép",
 			"id": "fe657d2c65e148c5b9a0fa8d50e13445"
 		},
 		{
-			"name": "Idő",
+			"name": "Időkép",
 			"id": "2b2a6b37cffd4f299f39e4963689a9c5"
 		},
 		{
-			"name": "Kamerarajz",
+			"name": "Idő",
 			"id": "ef7cefdb7cde431ba58759633229b1bd"
 		},
 		{
-			"name": "OCP_Audio",
-			"id": "ef7cefdb7cde431ba58759633229b1bd"
+			"name": "Kamerarajz",
+			"id": "24c2d0242b6e416a9f3d82113ccd8ffb"
 		}
 	]
 }

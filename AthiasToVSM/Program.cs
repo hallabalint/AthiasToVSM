@@ -34,10 +34,46 @@ namespace AthiasToVSM
         static async Task PatchAssetAsync(int index, object payload)
         {
             using var httpClient = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Patch, $"http://{config.AnthiasIP}/api/v2/assets/{config.Pages[index].Id}")
+            var url = $"http://{config.AnthiasIP}/api/v2/assets/{config.Pages[index].Id}";
+
+            // Convert payload to IEnumerable<KeyValuePair<string,string>>
+            IEnumerable<KeyValuePair<string, string>> formData;
+
+            if (payload is IEnumerable<KeyValuePair<string, string>> kvpEnumerable)
             {
-                Content = JsonContent.Create(payload)
+                formData = kvpEnumerable;
+            }
+            else
+            {
+                var list = new List<KeyValuePair<string, string>>();
+                if (payload != null)
+                {
+                    var type = payload.GetType();
+                    var props = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+                    foreach (var prop in props)
+                    {
+                        // skip indexers
+                        if (prop.GetIndexParameters().Length > 0) continue;
+                        var name = prop.Name;
+                        var value = prop.GetValue(payload);
+                        list.Add(new KeyValuePair<string, string>(name, value?.ToString() ?? string.Empty));
+                    }
+                }
+                formData = list;
+            }
+
+            using var content = new FormUrlEncodedContent(formData);
+            // Explicitly set the Content-Type header as requested
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded")
+            {
+                CharSet = "utf-8"
             };
+
+            var request = new HttpRequestMessage(HttpMethod.Patch, url)
+            {
+                Content = content
+            };
+
             var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
         }
@@ -76,7 +112,7 @@ namespace AthiasToVSM
                 "Anthias controller",
                 "Anthias controller over Ember+",
                 "HBJ",
-                "v2.0.0");
+                "v2.1.0");
 
             // General utility node
             var utilityNode = _emberTree.AddChildNode(2, "pages");
