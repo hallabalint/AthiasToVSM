@@ -36,6 +36,9 @@
             lbPort = new Label();
             lbDescription = new Label();
             label6 = new Label();
+            dgPages = new DataGridView();
+            SetActive = new DataGridViewButtonColumn();
+            ((System.ComponentModel.ISupportInitialize)dgPages).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -114,11 +117,30 @@
             label6.TabIndex = 7;
             label6.Text = "Description";
             // 
+            // dgPages
+            // 
+            dgPages.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgPages.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgPages.Columns.AddRange(new DataGridViewColumn[] { SetActive });
+            dgPages.Location = new Point(23, 138);
+            dgPages.Name = "dgPages";
+            dgPages.Size = new Size(765, 300);
+            dgPages.TabIndex = 8;
+            dgPages.CellContentClick += dgPages_CellContentClick;
+            // 
+            // SetActive
+            // 
+            SetActive.HeaderText = "Activate";
+            SetActive.Name = "SetActive";
+            SetActive.Text = "Set Active";
+            SetActive.UseColumnTextForButtonValue = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(dgPages);
             Controls.Add(label6);
             Controls.Add(lbDescription);
             Controls.Add(lbPort);
@@ -129,6 +151,7 @@
             Controls.Add(label1);
             Name = "Form1";
             Text = "AnthiasToVSM";
+            ((System.ComponentModel.ISupportInitialize)dgPages).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -143,5 +166,7 @@
         private Label lbPort;
         private Label lbDescription;
         private Label label6;
+        private DataGridView dgPages;
+        private DataGridViewButtonColumn SetActive;
     }
 }

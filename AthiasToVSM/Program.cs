@@ -78,7 +78,7 @@ namespace AthiasToVSM
             response.EnsureSuccessStatusCode();
         }
 
-        static void SetActiveByIndex(int index)
+        static public void SetActiveByIndex(int index)
         {
             for (int i = 0; i < config.Pages.Count; i++)
             {
@@ -112,7 +112,7 @@ namespace AthiasToVSM
                 "Anthias controller",
                 "Anthias controller over Ember+",
                 "HBJ",
-                "v2.1.0");
+                "v2.2.0");
 
             // General utility node
             var utilityNode = _emberTree.AddChildNode(2, "pages");
